@@ -4,12 +4,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ShoppingOrganizer.Mobile"
+    xmlns:ContentPages="clr-namespace:ShoppingOrganizer.Mobile.Domain.Items.ContentPages"
     Shell.FlyoutBehavior="Disabled"
     Title="ShoppingOrganizer.Mobile">
 
     <ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
+        ContentTemplate="{DataTemplate ContentPages:Recipes}"
         Route="MainPage" />
 
 </Shell>

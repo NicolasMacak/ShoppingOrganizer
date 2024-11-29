@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ShoppingOrganizer.Mobile.Domain.Items.ContentPages.IngredientDetail"
+             xmlns:viewmodel="clr-namespace:ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels"
+             x:DataType="viewmodel:IngredientDetailViewModel"
+             Title="{Binding HeaderTitle}">
+    <VerticalStackLayout>
+        <Entry
+            x:Name="Title"
+            Text="{Binding Ingredient.Title}"
+            />
+
+        <!--<Entry
+            x:Name="Price"
+            Keyboard="Numeric"
+            Text="{Binding Ingredient.Price}"
+            
+        <Picker x:Name="picker"
+                Title="Select Ingredient Unit"
+                ItemsSource="{Binding UnitOptions}">
+        </Picker>
+        />-->
+        <Button 
+            x:Name="label"
+            Text="Save"
+            FontSize="18"
+            Command="{Binding Source={viewmodel:IngredientDetailViewModel}, Path=SaveItemCommand}"
+            CommandParameter="{Binding Ingredient}"
+            />
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,5 +1,4 @@
-﻿using ShoppingOrganizer.Database;
-using ShoppingOrganizer.Database.Entities.Shops;
+﻿using ShoppingOrganizer.Database.Entities.Shops;
 using ShoppingOrganizer.Database.Entities.Items;
 using SQLite;
 

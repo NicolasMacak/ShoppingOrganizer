@@ -1,6 +1,6 @@
-﻿using ShopOrganizer.Database.Entities.Shops;
+﻿using ShoppingOrganizer.Database.Entities.Shops;
 
-namespace ShopOrganizer.Models.Shops;
+namespace ShoppingOrganizer.Models.Shops;
 
 public class ShopItem // do obchodu
 {

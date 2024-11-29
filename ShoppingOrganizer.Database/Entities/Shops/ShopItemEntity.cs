@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace ShopOrganizer.Database.Entities.Shops;
+namespace ShoppingOrganizer.Database.Entities.Shops;
 [Table("ShopItems")]
 public class ShopItemEntity
 {

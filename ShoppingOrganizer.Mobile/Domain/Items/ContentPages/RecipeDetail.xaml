@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ShoppingOrganizer.Mobile.Domain.Items.ContentPages.RecipeDetail"
+             xmlns:viewmodel="clr-namespace:ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels"
+             xmlns:models="clr-namespace:ShoppingOrganizer.Models.Items;assembly=ShoppingOrganizer.Models"
+             x:DataType="viewmodel:RecipeDetailViewModel"
+             Title="{Binding HeaderTitle}">
+    <VerticalStackLayout>
+        <Label 
+            Text="{Binding Recipe.Title}"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+        
+        <Button Text="Delete"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Command="{Binding DeleteRecipeCommand}"
+                />
+        
+        <Button Text="Attach"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Command="{Binding OpenAttachRecipesPopupCommand}"
+                />
+        
+        <CollectionView ItemsSource="{Binding RecipeParts}"
+                    SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type models:RecipePart}">
+                    <Grid Padding="0,5">
+                        <Frame>
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding Title}" 
+                               FontSize="24"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>
