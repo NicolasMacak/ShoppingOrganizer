@@ -1,4 +1,4 @@
-﻿//using Microsoft.Maui.Storage;
+﻿using Microsoft.Maui.Storage;
 
 namespace ShoppingOrganizer.Database;
 internal class Constants
@@ -13,5 +13,5 @@ internal class Constants
         SQLite.SQLiteOpenFlags.SharedCache;
 
     public static string DatabasePath =>
-        Path.Combine("dasd", DatabaseFilename); // TODO dat normalnu
+        Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename); // TODO dat normalnu
 }

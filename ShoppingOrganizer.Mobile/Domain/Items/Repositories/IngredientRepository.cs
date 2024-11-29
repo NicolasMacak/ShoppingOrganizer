@@ -6,12 +6,12 @@ using System.Linq.Expressions;
 namespace ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 public class IngredientRepository : IIngredientRepository
 {
-    public IngredientRepository(DatabaseHandler databaseHandler)
+    public IngredientRepository(DatabaseHandler DatabaseHandler)
     {
-        _databaseHandler = databaseHandler;
+        _DatabaseHandler = DatabaseHandler;
     }
 
-    private DatabaseHandler _databaseHandler;
+    private DatabaseHandler _DatabaseHandler;
 
     public Task<Ingredient> GetById(int id)
     {
@@ -20,8 +20,8 @@ public class IngredientRepository : IIngredientRepository
 
     public async Task<IEnumerable<Ingredient>> GetCollection()
     {
-        await _databaseHandler.Init();
-        var dtoes = await _databaseHandler.Database.Table<IngredientEntity>().ToListAsync();
+        await _DatabaseHandler.Init();
+        var dtoes = await _DatabaseHandler.Database.Table<IngredientEntity>().ToListAsync();
 
         return dtoes.Select(s => (Ingredient)s);
     }
