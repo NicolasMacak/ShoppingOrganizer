@@ -11,6 +11,7 @@ The app will automatically calculate the quantities needed for your grocery list
 - SQLite-net: A lightweight database framework for .NET applications
 
 ## Planned vs implemented features
+:heavy_check_mark: Design objects and their relations [Database design](https://ibb.co/jwQ3Yjt) <br>
 :hammer: Attaching recipes and ignredients to a main recipe (In progress) <br>
 :large_blue_diamond: Variants for components of an item (Backlog) <br>
 :large_blue_diamond: Linking ingredients to specific stores where they can be purchased (Backlog) <br>
