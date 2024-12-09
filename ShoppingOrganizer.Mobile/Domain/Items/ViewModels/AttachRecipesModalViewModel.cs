@@ -25,24 +25,6 @@ public partial class AttachRecipesModalViewModel : ObservableObject
         _recipePartRepository = ServiceHelper.GetService<IRecipePartRepository>();
     }
 
-/*
-    budu tu aj ingrediencie a recepty
-    ItemsAttachments bude mat recipeId aj IngredientId
-
-    v zavere chcem z toho vytvorit recipeParts
-
-    Adding
-    
-    foreach new Attachment {
-        new RecipePartEntity{ recipeId = x.recipeId, ingredientId = ingredientId
-}   
-    }
-
-    Deletion
-    where OwnerRecipeId == MainRecipe && ( RecipeId.In || IngredientId.In)
- */
-
-
     /// <summary>
     /// Recipe which associations are being modified
     /// </summary>
@@ -55,11 +37,6 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     [ObservableProperty]
     ObservableCollection<ItemAttachment> itemsAttachments = [];
 
-    //private HashSet<int> _initialIngredientAttachments; 
-    //private HashSet<int> _currentIngredientAttachments;
-    //private HashSet<int> _initialItemsAttachments; 
-    //private HashSet<int> _currentItemsAttachments;
-
     private Dictionary<int, (bool Initially, bool Currently)> _recipesAttachments = new();
     private Dictionary<int, (bool Initially, bool Currently)> _ingredientsAttachments = new();
 
@@ -68,7 +45,7 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     {
         var alteredItemAttachment = itemAttachment.RecipeId.HasValue ?
             ToggleRecipeAttachment(itemAttachment.RecipeId.Value)
-            : ToggleIngredientAttachment(itemAttachment.IngredientId.Value);
+            : ToggleIngredientAttachment(itemAttachment.IngredientId!.Value);
 
         ItemsAttachments.UpdateItem(alteredItemAttachment);
     }
@@ -149,13 +126,6 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     {
         await SetInitialStateForAttachmentHashsets();
         await SetAttachableItems();
-        //List<Task> initialTasks = new()
-        //{
-        //    SetAttachableItems(),
-        //    SetInitialStateForAttachmentHashsets()
-        //};
-
-        //await Task.WhenAll(initialTasks);
     }
 
     /// <summary>
@@ -163,44 +133,38 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     /// </summary>
     private async Task SetAttachableItems()
     {
-        // recipes
-        (await _recipeRepository.GetByFilter(x => x.Id != MainRecipe.Id))
-            .ForEach(x => {
-                ItemAttachment ItemAttachment = new() { RecipeId = x.Id, Title = x.Title, Attachment = ResolveIngredientAttachmentstate(x.Id) };
-                ItemsAttachments.Add(ItemAttachment);
-            });
-
         // ingredients
         (await _ingredientRepository.GetCollection()).ToList()
             .ForEach(x => {
-                ItemAttachment ItemAttachment = new() { IngredientId = x.Id, Title = x.Title, Attachment = ResolveIngredientAttachmentstate(x.Id) };
-                ItemsAttachments.Add(ItemAttachment);
+                ItemAttachment itemAttachment = new() { IngredientId = x.Id, Title = x.Title, Attachment = ResolveIngredientAttachmentstate(x.Id) };
+                ItemsAttachments.InsertItemAttachment(itemAttachment);
+            });
+
+        // recipes
+        (await _recipeRepository.GetByFilter(x => x.Id != MainRecipe.Id))
+            .ForEach(x => {
+                ItemAttachment itemAttachment = new() { RecipeId = x.Id, Title = x.Title, Attachment = ResolveRecipeAttachmentState(x.Id) };
+                ItemsAttachments.InsertItemAttachment(itemAttachment);
             });
     }
 
     private async Task SetInitialStateForAttachmentHashsets()
     {
-        //var allParts = await _recipePartRepository.GetList();
-        //var haha = allParts.ToList();
-
         List<RecipePart> allMainRecipeRelations = await _recipePartRepository
             .GetByFilter(x => x.OwnerRecipeId == MainRecipe.Id);
 
         IEnumerable<int> initialIngredientRelations = allMainRecipeRelations
             .Where(x => x.Ingredientid != null)
-            .Select(x => x.Ingredientid.Value);
+            .Select(x => x.Ingredientid!.Value);
 
         IEnumerable<int> initialRecipeRelations = allMainRecipeRelations
             .Where(x => x.RecipeId != null)
-            .Select(x => x.RecipeId.Value);
+            .Select(x => x.RecipeId!.Value);
 
         _ingredientsAttachments = initialIngredientRelations.ToDictionary(x => x, x => (true, true));
-        _recipesAttachments = initialIngredientRelations.ToDictionary(x => x, x => (true, true));
+        _recipesAttachments = initialRecipeRelations.ToDictionary(x => x, x => (true, true));
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public async Task SaveAssociations()
     {
         List<RecipePartEntity> recipePartsToAdd = [];
@@ -222,13 +186,13 @@ public partial class AttachRecipesModalViewModel : ObservableObject
                 }
                 else
                 {
-                    ingredientsToRemove.Add(item.IngredientId.Value);
+                    ingredientsToRemove.Add(item.IngredientId!.Value);
                 }
             }
         }
 
         // detach recipes and ingredients from the main recipe
-        await _recipePartRepository.Delete(x => x.OwnerRecipeId == MainRecipe.Id && (recipesToRemove.Contains(x.RecipeId.Value) || ingredientsToRemove.Contains(x.IngredientId.Value)));
+        await _recipePartRepository.Delete(x => x.OwnerRecipeId == MainRecipe.Id && (recipesToRemove.Contains(x.RecipeId!.Value) || ingredientsToRemove.Contains(x.IngredientId!.Value)));
         // todo  AddParts
     }
 
