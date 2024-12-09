@@ -12,7 +12,8 @@ The app will automatically calculate the quantities needed for your grocery list
 
 ## Planned vs implemented features
 :heavy_check_mark: Design objects and their relations [Database design](https://ibb.co/jwQ3Yjt) <br>
-:hammer: Attaching recipes and ignredients to a main recipe (In progress) <br>
+:hammer: Implementing source generator for basic CRUD database operations (In progress) <br>
+:large_blue_diamond: Attaching recipes and ingredients to a main recipe (In progress) <br>
 :large_blue_diamond: Variants for components of an item (Backlog) <br>
 :large_blue_diamond: Linking ingredients to specific stores where they can be purchased (Backlog) <br>
 :large_blue_diamond: Generating grocery lists based on selected recipes and quantities (Backlog) <br>
