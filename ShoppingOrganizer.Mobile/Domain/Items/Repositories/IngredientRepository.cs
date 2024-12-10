@@ -1,4 +1,5 @@
-﻿using ShoppingOrganizer.Database;
+﻿using AutoMapper;
+using ShoppingOrganizer.Database;
 using ShoppingOrganizer.Database.Entities.Items;
 using ShoppingOrganizer.Models.Items;
 using System.Linq.Expressions;
@@ -6,41 +7,37 @@ using System.Linq.Expressions;
 namespace ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 public class IngredientRepository : IIngredientRepository
 {
-    public IngredientRepository(DatabaseHandler DatabaseHandler)
+    private readonly DatabaseHandler _databaseHandler;
+    private readonly IMapper _mapper;
+
+    public IngredientRepository(DatabaseHandler databaseHandler, IMapper mapper)
     {
-        _DatabaseHandler = DatabaseHandler;
+        _databaseHandler = databaseHandler;
+        _mapper = mapper;
     }
 
-    private DatabaseHandler _DatabaseHandler;
-
-    public Task<Ingredient> GetById(int id)
+    /// <inheritdoc/>
+    public async Task<List<Ingredient>> GetAll()
     {
-        throw new NotImplementedException();
+        await _databaseHandler.Init();
+        List<IngredientEntity> result = await _databaseHandler.Database.Table<IngredientEntity>().ToListAsync();
+
+        return _mapper.Map<List<Ingredient>>(result);
     }
 
-    public async Task<IEnumerable<Ingredient>> GetCollection()
-    {
-        await _DatabaseHandler.Init();
-        var dtoes = await _DatabaseHandler.Database.Table<IngredientEntity>().ToListAsync();
-
-        return dtoes.Select(s => (Ingredient)s);
-    }
-
-    public Task Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
+    /// <inheritdoc/>
     public Task Delete(Expression<Func<IngredientEntity, bool>> expression)
     {
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task<List<Ingredient>> GetByFilter(Expression<Func<IngredientEntity, bool>> ex)
     {
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public Task<int> Update(IEnumerable<Ingredient> entity)
     {
         throw new NotImplementedException();

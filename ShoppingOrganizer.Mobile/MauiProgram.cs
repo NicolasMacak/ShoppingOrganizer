@@ -3,6 +3,9 @@ using ShoppingOrganizer.Database;
 using ShoppingOrganizer.Mobile.Domain.Items.ContentPages;
 using ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
+using AutoMapper;
+using ShoppingOrganizer.Database.Entities.Items;
+using ShoppingOrganizer.Models.Items;
 
 namespace ShoppingOrganizer.Mobile
 {
@@ -21,10 +24,11 @@ namespace ShoppingOrganizer.Mobile
 
             RegisterPagesAndViewModels(builder.Services);
             RegisterServices(builder.Services);
+            AddAutoMapper(builder.Services);
 
-#if DEBUG
+            #if DEBUG
             builder.Logging.AddDebug();
-#endif
+            #endif
 
             return builder.Build();
         }
@@ -40,8 +44,6 @@ namespace ShoppingOrganizer.Mobile
 
         private static void RegisterPagesAndViewModels(IServiceCollection services)
         {
-            #region Items
-
             services.AddSingleton<Ingredients>();
             services.AddSingleton<IngredientsViewModel>();
 
@@ -56,8 +58,20 @@ namespace ShoppingOrganizer.Mobile
 
             services.AddTransient<AttachRecipesModal>();
             services.AddTransient<AttachRecipesModalViewModel>();
+        }
 
-            #endregion
+        private static void AddAutoMapper(IServiceCollection services)
+        {
+            MapperConfiguration configuration = new (cfg =>
+            {
+                cfg.CreateMap<IngredientEntity, Ingredient>().ReverseMap();
+                cfg.CreateMap<RecipeEntity, Recipe>().ReverseMap();
+                cfg.CreateMap<RecipePartEntity, RecipePart>().ReverseMap();
+            });
+
+            IMapper mapper = configuration.CreateMapper();
+
+            services.AddSingleton(mapper);
         }
     }
 }

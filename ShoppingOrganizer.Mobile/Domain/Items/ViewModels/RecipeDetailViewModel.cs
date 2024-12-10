@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ShoppingOrganizer.Mobile.Core;
 using ShoppingOrganizer.Mobile.Domain.Items.ContentPages;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
-using ShoppingOrganizer.Mobile.Shared.Helpers;
 using ShoppingOrganizer.Models.Items;
 using System.Collections.ObjectModel;
 using static ShoppingOrganizer.Mobile.Shared.Constants;
@@ -15,12 +15,15 @@ public partial class RecipeDetailViewModel : ObservableObject
     public static string PlaceholderTitle = "New Recipe";
 
     private readonly IRecipeRepository _recipeRepository;
-    private readonly IIngredientRepository _ingredientRepository;
+    private readonly IRecipePartRepository _recipePartRepository;
 
+    #region Pragma
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #endregion
     public RecipeDetailViewModel()
     {
-        _recipeRepository = ServiceHelper.GetService<IRecipeRepository>();
-        _ingredientRepository = ServiceHelper.GetService<IIngredientRepository>();
+        _recipeRepository = PlatformServiceProvider.GetService<IRecipeRepository>();
+        _recipePartRepository = PlatformServiceProvider.GetService<IRecipePartRepository>();
     }
 
     [ObservableProperty]
@@ -56,7 +59,7 @@ public partial class RecipeDetailViewModel : ObservableObject
 
     public async Task GetRecipeParts()
     {
-        var fetchedRecipes = await _recipeRepository.GetRecipeParts(Recipe.Id);
+        List<RecipePart> fetchedRecipes = await _recipePartRepository.GetByFilter(x => x.OwnerRecipeId == Recipe.Id);
         RecipeParts = new ObservableCollection<RecipePart>(fetchedRecipes);
     }
 

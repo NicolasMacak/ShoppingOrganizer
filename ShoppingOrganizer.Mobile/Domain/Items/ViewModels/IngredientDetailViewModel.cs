@@ -2,18 +2,20 @@
 using static ShoppingOrganizer.Mobile.Shared.Constants;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingOrganizer.Mobile.Shared.Helpers;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 using ShoppingOrganizer.Models.Items;
+using ShoppingOrganizer.Mobile.Core;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
 [QueryProperty(nameof(Ingredient), PropertyKeys.Ingredient)]
 public partial class IngredientDetailViewModel : ObservableObject
 {
-    #region Initialization and properties
+    #region pragma
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #endregion
     public IngredientDetailViewModel()
     {
-        _ingredientRepository = ServiceHelper.GetService<IIngredientRepository>();
+        _ingredientRepository = PlatformServiceProvider.GetService<IIngredientRepository>();
 
         UnitOptions = new ObservableCollection<string>(new string[] {"Placeholder", "DruhyPlace"});
     }
@@ -22,7 +24,6 @@ public partial class IngredientDetailViewModel : ObservableObject
 
     private const string PlaceholderTitle = "New Ingredient";
 
-    #endregion
 
     [RelayCommand]
     public async Task SaveItem(Ingredient ingredient)

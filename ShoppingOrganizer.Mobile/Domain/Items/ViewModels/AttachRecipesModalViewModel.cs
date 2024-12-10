@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ShoppingOrganizer.Database.Entities.Items;
+using ShoppingOrganizer.Mobile.Core;
 using ShoppingOrganizer.Mobile.Domain.Items.Extensions;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
-using ShoppingOrganizer.Mobile.Shared.Helpers;
 using ShoppingOrganizer.Models.Items;
 using System.Collections.ObjectModel;
 using static ShoppingOrganizer.Mobile.Shared.Constants;
@@ -18,11 +18,14 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     private readonly IIngredientRepository _ingredientRepository;
     private readonly IRecipePartRepository _recipePartRepository;
 
-    public AttachRecipesModalViewModel() 
+    #region pragma
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #endregion
+    public AttachRecipesModalViewModel()
     {
-        _recipeRepository = ServiceHelper.GetService<IRecipeRepository>(); // injectorService
-        _ingredientRepository = ServiceHelper.GetService<IIngredientRepository>();
-        _recipePartRepository = ServiceHelper.GetService<IRecipePartRepository>();
+        _recipeRepository = PlatformServiceProvider.GetService<IRecipeRepository>();
+        _ingredientRepository = PlatformServiceProvider.GetService<IIngredientRepository>();
+        _recipePartRepository = PlatformServiceProvider.GetService<IRecipePartRepository>();
     }
 
     /// <summary>
@@ -134,14 +137,16 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     private async Task SetAttachableItems()
     {
         // ingredients
-        (await _ingredientRepository.GetCollection()).ToList()
+        List<Ingredient> allIngredients = await _ingredientRepository.GetAll();
+        allIngredients
             .ForEach(x => {
                 ItemAttachment itemAttachment = new() { IngredientId = x.Id, Title = x.Title, Attachment = ResolveIngredientAttachmentstate(x.Id) };
                 ItemsAttachments.InsertItemAttachment(itemAttachment);
             });
 
         // recipes
-        (await _recipeRepository.GetByFilter(x => x.Id != MainRecipe.Id))
+        List<Recipe> allRecipesExceptMainOne = await _recipeRepository.GetByFilter(x => x.Id != MainRecipe.Id);
+        allRecipesExceptMainOne
             .ForEach(x => {
                 ItemAttachment itemAttachment = new() { RecipeId = x.Id, Title = x.Title, Attachment = ResolveRecipeAttachmentState(x.Id) };
                 ItemsAttachments.InsertItemAttachment(itemAttachment);

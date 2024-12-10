@@ -20,13 +20,5 @@ public class Recipe
     public string Title { get; set; }
     public string? Description { get; set; }
     public List<RecipePart>? RecipesParts { get; set; }
-
-    public static explicit operator Recipe(RecipeEntity RecipeEntity)
-    {
-        return new Recipe(
-            RecipeEntity.Id,
-            RecipeEntity.Title,
-            RecipeEntity.Description);
-    }
 }
 

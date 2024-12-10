@@ -1,49 +1,50 @@
-﻿using ShoppingOrganizer.Database;
+﻿using AutoMapper;
+using ShoppingOrganizer.Database;
 using ShoppingOrganizer.Database.Entities.Items;
 using ShoppingOrganizer.Models.Items;
-using SQLite;
 using System.Linq.Expressions;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 public class RecipePartRepository : IRecipePartRepository
 {
-    public RecipePartRepository(DatabaseHandler DatabaseHandler) {
-        _DatabaseHandler = DatabaseHandler;
+
+    private readonly DatabaseHandler _databaseHandler;
+    private readonly IMapper _mapper;
+
+    public RecipePartRepository(DatabaseHandler databaseHandler, IMapper mapper) {
+        _databaseHandler = databaseHandler;
+        _mapper = mapper;
     }
 
-    private readonly DatabaseHandler _DatabaseHandler;
-
-    public Task<RecipePart> GetById(int id)
+    /// <inheritdoc/>
+    public async Task<List<RecipePart>> GetAll()
     {
-        throw new NotImplementedException();
+        await _databaseHandler.Init();
+        List<RecipePartEntity> result = await _databaseHandler.Database.Table<RecipePartEntity>().ToListAsync();
+
+        return _mapper.Map<List<RecipePart>>(result);
     }
 
-    public async Task<IEnumerable<RecipePart>> GetCollection()
-    {
-        await _DatabaseHandler.Init();
-        var dtoes = await _DatabaseHandler.Database.Table<RecipePartEntity>().ToListAsync();
-
-        return dtoes.Select(s => (RecipePart)s);
-    }
-
+    /// <inheritdoc/>
     public Task<int> Update(IEnumerable<RecipePart> entity)
     {
         throw new NotImplementedException();
-        //List<RecipePart>
-
-        //return _DatabaseHandler.Database.Inse
     }
 
+    /// <inheritdoc/>
     public Task Delete(Expression<Func<RecipePartEntity, bool>> expression)
     {
-        return _DatabaseHandler.Database.Table<RecipePartEntity>().DeleteAsync(expression);
+        return _databaseHandler.Database.Table<RecipePartEntity>().DeleteAsync(expression);
     }
 
+    /// <inheritdoc/>
     public async Task<List<RecipePart>> GetByFilter(Expression<Func<RecipePartEntity, bool>> ex)
     {
-        AsyncTableQuery<RecipePartEntity> query = _DatabaseHandler.Database.Table<RecipePartEntity>().Where(ex);
-        List<RecipePartEntity> result = await query.ToListAsync();
+        List<RecipePartEntity> result = await _databaseHandler.Database
+            .Table<RecipePartEntity>()
+            .Where(ex)
+            .ToListAsync();
 
-        return result.Select(s => (RecipePart)s).ToList();
+        return _mapper.Map<List<RecipePart>>(result);
     }
 }

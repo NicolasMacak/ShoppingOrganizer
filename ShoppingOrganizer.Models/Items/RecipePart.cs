@@ -10,18 +10,4 @@ public class RecipePart
     public string Title { get; set; }
     public double Quantity {  get; set; }
     public string? Description { get; set; }
-
-    public static explicit operator RecipePart(RecipePartEntity dto)
-    {
-        return new RecipePart()
-        {
-            Id = dto.Id,
-            OwnerRecipeId = dto.OwnerRecipeId,
-            Description = dto.Description,
-            Ingredientid = dto.IngredientId,
-            RecipeId = dto.RecipeId,
-            Quantity = dto.Quantity,
-            Title = dto.Title
-        };
-    }
 }
