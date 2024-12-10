@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ShoppingOrganizer.Mobile.Domain.Items.ContentPages;
-using static ShoppingOrganizer.Mobile.Shared.Constants;
+using static ShoppingOrganizer.Mobile.Domain.Items.Constants;
 using System.Collections.ObjectModel;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 using ShoppingOrganizer.Models.Items;
-using ShoppingOrganizer.Mobile.Core;
+using ShoppingOrganizer.Mobile.Infrastructure;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
 public partial class IngredientsViewModel : ObservableObject

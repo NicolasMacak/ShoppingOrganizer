@@ -1,17 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using static ShoppingOrganizer.Mobile.Shared.Constants;
+using static ShoppingOrganizer.Mobile.Domain.Items.Constants;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 using ShoppingOrganizer.Models.Items;
-using ShoppingOrganizer.Mobile.Core;
+using ShoppingOrganizer.Mobile.Infrastructure;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
 [QueryProperty(nameof(Ingredient), PropertyKeys.Ingredient)]
 public partial class IngredientDetailViewModel : ObservableObject
 {
     #region pragma
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     #endregion
     public IngredientDetailViewModel()
     {

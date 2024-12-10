@@ -1,13 +1,12 @@
 ﻿using System.Globalization;
 using static ShoppingOrganizer.Models.Items.ItemAttachment;
 
-
 namespace ShoppingOrganizer.Mobile.Domain.Items.Converters;
 public class ColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return (AttachmentState)value switch
+        return (AttachmentState)value! switch
         {
             AttachmentState.AlreadyAttached => Colors.Green,
             AttachmentState.Removed => Colors.PaleVioletRed,
@@ -16,8 +15,8 @@ public class ColorConverter : IValueConverter
         };
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        return Colors.White;
     }
 }

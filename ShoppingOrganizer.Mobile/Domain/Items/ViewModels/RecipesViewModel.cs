@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingOrganizer.Mobile.Core;
 using ShoppingOrganizer.Mobile.Domain.Items.ContentPages;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
+using ShoppingOrganizer.Mobile.Infrastructure;
 using ShoppingOrganizer.Models.Items;
 using System.Collections.ObjectModel;
-using static ShoppingOrganizer.Mobile.Shared.Constants;
+using static ShoppingOrganizer.Mobile.Domain.Items.Constants;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
 

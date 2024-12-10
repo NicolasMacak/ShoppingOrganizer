@@ -1,4 +1,4 @@
-﻿namespace ShoppingOrganizer.Mobile.Core;
+﻿namespace ShoppingOrganizer.Mobile.Infrastructure;
 
 /// <summary>
 /// Dependency injection can not be utilized in ViewModels

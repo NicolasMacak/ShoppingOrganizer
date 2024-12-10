@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              x:Class="ShoppingOrganizer.Mobile.Domain.Items.ContentPages.AttachRecipesModal"
              xmlns:converters="clr-namespace:ShoppingOrganizer.Mobile.Domain.Items.Converters"
              xmlns:viewmodel="clr-namespace:ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels"
@@ -30,7 +29,7 @@
                     <Frame BackgroundColor="{Binding Attachment, Converter={StaticResource colorChangedConverter}}">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:AttachRecipesModalViewModel}}, Path=ToggleAttachmentCommand}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:AttachRecipesModalViewModel}}, Path=ToggleItemAttachmentCommand}"
                                 CommandParameter="{Binding .}" >
                             </TapGestureRecognizer>
                         </Frame.GestureRecognizers>

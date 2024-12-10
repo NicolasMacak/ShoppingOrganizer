@@ -7,7 +7,7 @@
              Title="{Binding HeaderTitle}">
     <VerticalStackLayout>
         <Entry
-            x:Name="Title"
+            x:Name="Titlee"
             Text="{Binding Ingredient.Title}"
             />
 

@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ShoppingOrganizer.Database.Entities.Items;
-using ShoppingOrganizer.Mobile.Core;
 using ShoppingOrganizer.Mobile.Domain.Items.Extensions;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
+using ShoppingOrganizer.Mobile.Infrastructure;
 using ShoppingOrganizer.Models.Items;
 using System.Collections.ObjectModel;
-using static ShoppingOrganizer.Mobile.Shared.Constants;
+using static ShoppingOrganizer.Mobile.Domain.Items.Constants;
 using static ShoppingOrganizer.Models.Items.ItemAttachment;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
@@ -44,7 +44,7 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     private Dictionary<int, (bool Initially, bool Currently)> _ingredientsAttachments = new();
 
     [RelayCommand]
-    public async Task ToggleItemAttachment(ItemAttachment itemAttachment)
+    public void ToggleItemAttachment(ItemAttachment itemAttachment)
     {
         var alteredItemAttachment = itemAttachment.RecipeId.HasValue ?
             ToggleRecipeAttachment(itemAttachment.RecipeId.Value)
@@ -204,8 +204,7 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     /// <summary>
     /// Reverts attachments to the initial state
     /// </summary>
-    public async Task ResetAssociations()
+    public void ResetAssociations()
     {
-
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ShoppingOrganizer.Mobile.Shared;
+﻿namespace ShoppingOrganizer.Mobile.Domain.Items;
 
 public static class Constants
 {
