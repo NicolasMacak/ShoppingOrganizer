@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using ShoppingOrganizer.Database.Entities.Items;
 using ShoppingOrganizer.Mobile.Domain.Items.Extensions;
 using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
@@ -18,6 +19,8 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     private readonly IIngredientRepository _ingredientRepository;
     private readonly IRecipePartRepository _recipePartRepository;
 
+    private readonly ILogger<AttachRecipesModalViewModel> _logger;
+
     #region pragma
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     #endregion
@@ -26,6 +29,7 @@ public partial class AttachRecipesModalViewModel : ObservableObject
         _recipeRepository = PlatformServiceProvider.GetService<IRecipeRepository>();
         _ingredientRepository = PlatformServiceProvider.GetService<IIngredientRepository>();
         _recipePartRepository = PlatformServiceProvider.GetService<IRecipePartRepository>();
+        _logger = PlatformServiceProvider.GetService<ILogger<AttachRecipesModalViewModel>>();
     }
 
     /// <summary>

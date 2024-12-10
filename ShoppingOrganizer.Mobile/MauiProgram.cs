@@ -6,6 +6,7 @@ using ShoppingOrganizer.Mobile.Domain.Items.Repositories;
 using AutoMapper;
 using ShoppingOrganizer.Database.Entities.Items;
 using ShoppingOrganizer.Models.Items;
+using MetroLog.MicrosoftExtensions;
 
 namespace ShoppingOrganizer.Mobile
 {
@@ -13,7 +14,7 @@ namespace ShoppingOrganizer.Mobile
     {
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
+            MauiAppBuilder builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
@@ -25,6 +26,7 @@ namespace ShoppingOrganizer.Mobile
             RegisterPagesAndViewModels(builder.Services);
             RegisterServices(builder.Services);
             AddAutoMapper(builder.Services);
+            AddLogging(builder);
 
             #if DEBUG
             builder.Logging.AddDebug();
@@ -72,6 +74,39 @@ namespace ShoppingOrganizer.Mobile
             IMapper mapper = configuration.CreateMapper();
 
             services.AddSingleton(mapper);
+        }
+
+        private static void AddLogging(MauiAppBuilder builder)
+        {
+            builder.Logging
+                .SetMinimumLevel(LogLevel.Information)
+                .AddTraceLogger(
+                    options =>
+                    {
+                        options.MinLevel = LogLevel.Trace;
+                        options.MaxLevel = LogLevel.Critical;
+                    })
+                .AddConsoleLogger(
+                    options =>
+                    {
+                        options.MinLevel = LogLevel.Information;
+                        options.MaxLevel = LogLevel.Critical;
+                    })
+                .AddInMemoryLogger(
+                    options =>
+                    {
+                        options.MaxLines = 1024;
+                        options.MinLevel = LogLevel.Debug;
+                        options.MaxLevel = LogLevel.Critical;
+                    })
+                .AddStreamingFileLogger(
+                    options =>
+                    {
+                        options.RetainDays = 2;
+                        options.FolderPath = Path.Combine(
+                            FileSystem.CacheDirectory,
+                            "MetroLogs");
+                    });
         }
     }
 }
