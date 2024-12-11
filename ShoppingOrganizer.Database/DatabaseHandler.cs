@@ -16,14 +16,14 @@ public class DatabaseHandler
 
     async public Task Init() // TODO. Volat raz pri starte aplikacie. Pri nejakom loadingu
     {
-        await DeleteAndRepopulateData();
+        //await DeleteAndRepopulateData();
 
         if (Database is not null) 
         {
             return;
         }
 
-        await DeleteAndRepopulateData();
+        //await DeleteAndRepopulateData();
         await CreateTablesIfNotExists();
     }
 

@@ -11,10 +11,12 @@ The app will automatically calculate the quantities needed for your grocery list
 - SQLite-net: A lightweight database framework for .NET applications
 
 ## Planned vs implemented features
+[Progression (Github Projets)](https://github.com/users/NicolasMacak/projects/2/views/1)
+
 :heavy_check_mark: Design objects and their relations [Database design](https://ibb.co/jwQ3Yjt) <br>
-:heavy_check_mark: Integrate AutoMapper instead of mapping through explicit operators (In progress) <br>
-:hammer: Source generator for basic CRUD database operations(SQLite does not allow usage of Repository Design Pattern as we know it). (In progress) <br>
-:hammer: Attaching recipes and ingredients to a main recipe (In progress) <br>
+:heavy_check_mark: Integrate AutoMapper instead of mapping through explicit operators <br>
+:heavy_check_mark: Attaching recipes and ingredients to the main recipe <br>
+🔨 Filtering component
 :large_blue_diamond: Variants for components of an item (Backlog) <br>
 :large_blue_diamond: Linking ingredients to specific stores where they can be purchased (Backlog) <br>
 :large_blue_diamond: Generating grocery lists based on selected recipes and quantities (Backlog) <br>

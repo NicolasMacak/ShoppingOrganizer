@@ -1,4 +1,4 @@
-﻿using ShoppingOrganizer.Mobile.Core.Interfaces;
+﻿using ShoppingOrganizer.Mobile.Core.Repository;
 using ShoppingOrganizer.Models.Items;
 using ShoppingOrganizer.Database.Entities.Items;
 

@@ -28,7 +28,7 @@ public partial class IngredientDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task SaveItem(Ingredient ingredient)
     {
-        await _ingredientRepository.Update(new List<Ingredient> { ingredient });
+        //await _ingredientRepository.Update(new List<Ingredient> { ingredient });
         await Shell.Current.GoToAsync("..");
     }
 

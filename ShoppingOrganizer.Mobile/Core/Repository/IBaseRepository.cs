@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ShoppingOrganizer.Mobile.Core.Interfaces;
+namespace ShoppingOrganizer.Mobile.Core.Repository;
 
 /// <summary>
 /// Used by Source code generator to generate provided methods for each entity's repository
@@ -20,10 +20,13 @@ public interface IBaseRepository<Model, Entity>
     /// <summary>
     /// Updates counterpart entities of provided models
     /// </summary>
-    public Task<int> Update(IEnumerable<Model> entity);
+    public Task Update(IEnumerable<Entity> entity);
     /// <summary>
     /// Deletes records that satisfy the condition
     /// </summary>
+    /// <remarks>
+    /// Does not support 'IN' SQL statement
+    /// </remarks>
     public Task Delete(Expression<Func<Entity, bool>> expression);
 }
 

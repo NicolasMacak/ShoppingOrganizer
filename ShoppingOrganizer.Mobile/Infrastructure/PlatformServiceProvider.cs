@@ -1,7 +1,7 @@
 ﻿namespace ShoppingOrganizer.Mobile.Infrastructure;
 
 /// <summary>
-/// Dependency injection can not be utilized in ViewModels
+/// Viewmodel constructor has to be parameterless. This allows utilizing DI within construtor
 /// </summary>
 public static class PlatformServiceProvider
 {

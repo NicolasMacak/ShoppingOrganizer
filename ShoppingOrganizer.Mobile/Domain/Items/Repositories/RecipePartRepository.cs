@@ -1,50 +1,16 @@
 ﻿using AutoMapper;
+using MetroLog;
+using Microsoft.Extensions.Logging;
 using ShoppingOrganizer.Database;
 using ShoppingOrganizer.Database.Entities.Items;
+using ShoppingOrganizer.Mobile.Core.Repository;
 using ShoppingOrganizer.Models.Items;
-using System.Linq.Expressions;
+using System.Reflection;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Repositories;
-public class RecipePartRepository : IRecipePartRepository
+public class RecipePartRepository : BaseRepository<RecipePart, RecipePartEntity>, IRecipePartRepository
 {
-
-    private readonly DatabaseHandler _databaseHandler;
-    private readonly IMapper _mapper;
-
-    public RecipePartRepository(DatabaseHandler databaseHandler, IMapper mapper) {
-        _databaseHandler = databaseHandler;
-        _mapper = mapper;
-    }
-
-    /// <inheritdoc/>
-    public async Task<List<RecipePart>> GetAll()
+    public RecipePartRepository(DatabaseHandler databaseHandler, IMapper mapper, ILogger<BaseRepository<RecipePart, RecipePartEntity>> logger): base(databaseHandler, mapper, logger)
     {
-        await _databaseHandler.Init();
-        List<RecipePartEntity> result = await _databaseHandler.Database.Table<RecipePartEntity>().ToListAsync();
-
-        return _mapper.Map<List<RecipePart>>(result);
-    }
-
-    /// <inheritdoc/>
-    public Task<int> Update(IEnumerable<RecipePart> entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task Delete(Expression<Func<RecipePartEntity, bool>> expression)
-    {
-        return _databaseHandler.Database.Table<RecipePartEntity>().DeleteAsync(expression);
-    }
-
-    /// <inheritdoc/>
-    public async Task<List<RecipePart>> GetByFilter(Expression<Func<RecipePartEntity, bool>> ex)
-    {
-        List<RecipePartEntity> result = await _databaseHandler.Database
-            .Table<RecipePartEntity>()
-            .Where(ex)
-            .ToListAsync();
-
-        return _mapper.Map<List<RecipePart>>(result);
     }
 }

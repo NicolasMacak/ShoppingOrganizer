@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using static ShoppingOrganizer.Models.Items.ItemAttachment;
+using static ShoppingOrganizer.Models.Items.AttachedItem;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Converters;
 public class ColorConverter : IValueConverter
@@ -8,7 +8,7 @@ public class ColorConverter : IValueConverter
     {
         return (AttachmentState)value! switch
         {
-            AttachmentState.AlreadyAttached => Colors.Green,
+            AttachmentState.AttachedInitially => Colors.Green,
             AttachmentState.Removed => Colors.PaleVioletRed,
             AttachmentState.New => Colors.LightGreen,
             _ => Colors.White

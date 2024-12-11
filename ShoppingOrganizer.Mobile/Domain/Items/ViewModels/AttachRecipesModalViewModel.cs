@@ -8,9 +8,14 @@ using ShoppingOrganizer.Mobile.Infrastructure;
 using ShoppingOrganizer.Models.Items;
 using System.Collections.ObjectModel;
 using static ShoppingOrganizer.Mobile.Domain.Items.Constants;
-using static ShoppingOrganizer.Models.Items.ItemAttachment;
+using static ShoppingOrganizer.Models.Items.AttachedItem;
 
 namespace ShoppingOrganizer.Mobile.Domain.Items.Models.ViewModels;
+
+/* Slovickarenie
+ * AttachedItem. Relations
+ * 
+ */
 
 [QueryProperty(nameof(MainRecipe), PropertyKeys.Recipe)]
 public partial class AttachRecipesModalViewModel : ObservableObject
@@ -42,152 +47,56 @@ public partial class AttachRecipesModalViewModel : ObservableObject
     /// Recipes and ingredients that can be attached
     /// </summary>
     [ObservableProperty]
-    ObservableCollection<ItemAttachment> itemsAttachments = [];
-
-    private Dictionary<int, (bool Initially, bool Currently)> _recipesAttachments = new();
-    private Dictionary<int, (bool Initially, bool Currently)> _ingredientsAttachments = new();
-
-    [RelayCommand]
-    public void ToggleItemAttachment(ItemAttachment itemAttachment)
-    {
-        var alteredItemAttachment = itemAttachment.RecipeId.HasValue ?
-            ToggleRecipeAttachment(itemAttachment.RecipeId.Value)
-            : ToggleIngredientAttachment(itemAttachment.IngredientId!.Value);
-
-        ItemsAttachments.UpdateItem(alteredItemAttachment);
-    }
-
-    /// <summary>
-    /// Finds an Recipe in the <see cref="ItemsAttachments"/> and updates its <see cref="AttachmentState"/>
-    /// </summary>
-    /// <param name="recipeId"></param>
-    /// <returns> Updated <see cref="ItemAttachment"/></returns>
-    private ItemAttachment ToggleRecipeAttachment(int recipeId)
-    {
-        _recipesAttachments[recipeId] = (_recipesAttachments[recipeId].Initially, !_recipesAttachments[recipeId].Currently);
-
-        ItemAttachment ItemAttachment = ItemsAttachments.Single(x => x.RecipeId == recipeId);
-        ItemAttachment.Attachment = ResolveIngredientAttachmentstate(recipeId);
-
-        return ItemAttachment;
-    }
-
-    /// <summary>
-    /// Finds an Ingredient in the <see cref="ItemsAttachments"/> and updates its <see cref="AttachmentState"/>
-    /// </summary>
-    /// <param name="ingredientId"></param>
-    /// <returns> Updated <see cref="ItemAttachment"/></returns>
-    private ItemAttachment ToggleIngredientAttachment(int ingredientId)
-    {
-        _ingredientsAttachments[ingredientId] = (_ingredientsAttachments[ingredientId].Initially, _ingredientsAttachments[ingredientId].Currently);
-
-        ItemAttachment ingredientAttachment = ItemsAttachments.Single(x => x.IngredientId == ingredientId);
-        ingredientAttachment.Attachment = ResolveRecipeAttachmentState(ingredientId);
-
-        return ingredientAttachment;
-    }
-
-    /// <summary>
-    /// Returns new state of attachment for the Recipe
-    /// </summary>
-    private AttachmentState ResolveRecipeAttachmentState(int recipeId) {
-        if (!_recipesAttachments.TryGetValue(recipeId, out (bool Initially, bool Currently) recipeAttachment))
-        {
-            return AttachmentState.Ignored;
-        }
-
-        bool AttachmentInitially = recipeAttachment.Initially;
-        bool AttachmentCurrently = recipeAttachment.Currently; 
-
-        return (AttachmentInitially, AttachmentCurrently) switch
-        {
-            (true, true) => AttachmentState.AlreadyAttached,
-            (false, true) => AttachmentState.New,
-            (true, false) => AttachmentState.Removed,
-            _ => AttachmentState.Ignored
-        };
-    }
-
-    /// <summary>
-    /// Returns new state of attachment the Ingredient
-    /// </summary>
-    private AttachmentState ResolveIngredientAttachmentstate(int ingredientId) {
-        if (!_ingredientsAttachments.TryGetValue(ingredientId, out (bool Initially, bool Currently) ingredientAttachment))
-        {
-            return AttachmentState.Ignored;
-        }
-
-        bool Attachmentinitially = ingredientAttachment.Initially;
-        bool AttachmentCurrently = ingredientAttachment.Currently; 
-
-        return (Attachmentinitially, AttachmentCurrently) switch
-        {
-            (true, true) => AttachmentState.AlreadyAttached,
-            (false, true) => AttachmentState.New,
-            (true, false) => AttachmentState.Removed,
-            _ => AttachmentState.Ignored
-        };
-    }
+    ObservableCollection<AttachedItem> itemsAttachments = []; // todo. Attached Currently And initially here
 
     public async Task InitializeScreen()
     {
-        await SetInitialStateForAttachmentHashsets();
         await SetAttachableItems();
     }
 
     /// <summary>
-    /// All recipes except the main one are mapped to the <see cref="ItemAttachment"/> and added to the <see cref="ItemsAttachments"/>
+    /// <see cref="AttachedItem.AttachedCurrently"/> of this item will be reverted and <see cref="AttachmentState"/> updated accordingly 
     /// </summary>
-    private async Task SetAttachableItems()
+    [RelayCommand]
+    public void ToggleAttachedItem(AttachedItem attachedItemToToggle)
     {
-        // ingredients
-        List<Ingredient> allIngredients = await _ingredientRepository.GetAll();
-        allIngredients
-            .ForEach(x => {
-                ItemAttachment itemAttachment = new() { IngredientId = x.Id, Title = x.Title, Attachment = ResolveIngredientAttachmentstate(x.Id) };
-                ItemsAttachments.InsertItemAttachment(itemAttachment);
-            });
+        attachedItemToToggle.ToggleAttachmentState();
 
-        // recipes
-        List<Recipe> allRecipesExceptMainOne = await _recipeRepository.GetByFilter(x => x.Id != MainRecipe.Id);
-        allRecipesExceptMainOne
-            .ForEach(x => {
-                ItemAttachment itemAttachment = new() { RecipeId = x.Id, Title = x.Title, Attachment = ResolveRecipeAttachmentState(x.Id) };
-                ItemsAttachments.InsertItemAttachment(itemAttachment);
-            });
+        ItemsAttachments.UpdateItem(attachedItemToToggle);
     }
 
-    private async Task SetInitialStateForAttachmentHashsets()
+    [RelayCommand]
+    public async Task Save() // todo. optimalization?, managing altered relations in the separate field
     {
-        List<RecipePart> allMainRecipeRelations = await _recipePartRepository
-            .GetByFilter(x => x.OwnerRecipeId == MainRecipe.Id);
+        (List<int?> recipesToRemove, List<int?> ingredientsToRemove, List<RecipePartEntity> recipePartsToAdd) = GetAlteredRelations();
 
-        IEnumerable<int> initialIngredientRelations = allMainRecipeRelations
-            .Where(x => x.Ingredientid != null)
-            .Select(x => x.Ingredientid!.Value);
-
-        IEnumerable<int> initialRecipeRelations = allMainRecipeRelations
-            .Where(x => x.RecipeId != null)
-            .Select(x => x.RecipeId!.Value);
-
-        _ingredientsAttachments = initialIngredientRelations.ToDictionary(x => x, x => (true, true));
-        _recipesAttachments = initialRecipeRelations.ToDictionary(x => x, x => (true, true));
-    }
-
-    public async Task SaveAssociations()
-    {
-        List<RecipePartEntity> recipePartsToAdd = [];
-
-        List<int> recipesToRemove = [];
-        List<int> ingredientsToRemove = [];
-
-        foreach (var item in ItemsAttachments)
+        if (recipesToRemove.Count > 0 || ingredientsToRemove.Count > 0)
         {
-            if(item.Attachment == AttachmentState.New)
+            await _recipePartRepository.Delete(x => x.OwnerRecipeId == MainRecipe.Id && (recipesToRemove.Contains(x.RecipeId) || ingredientsToRemove.Contains(x.IngredientId))); 
+        }
+
+        if(recipePartsToAdd.Count > 0)
+        {
+            await _recipePartRepository.Update(recipePartsToAdd);
+        }
+    }
+
+    /// <summary>
+    /// Gets relations that were added and removed+
+    /// </summary>
+    private (List<int?> recipesToRemove, List<int?> ingredientsToRemove, List<RecipePartEntity> recipePartsToAdd) GetAlteredRelations()
+    {
+        List<RecipePartEntity> recipePartsToAdd = new();
+        List<int?> recipesToRemove = new(); // must be nullable. SQLite cannot parse expression 'nullableObject.Value'. Ex: x.RecipeId!.Value
+        List<int?> ingredientsToRemove = new();
+
+        foreach (AttachedItem item in ItemsAttachments)
+        {
+            if (item.State == AttachmentState.New)
             {
-                recipePartsToAdd.Add(new RecipePartEntity { IngredientId = item.IngredientId, RecipeId = item.RecipeId, OwnerRecipeId = MainRecipe.Id, Title = item.Title });
+                recipePartsToAdd.Add(new RecipePartEntity { OwnerRecipeId = MainRecipe.Id, IngredientId = item.IngredientId, RecipeId = item.RecipeId, Title = item.Title });
             }
-            else if(item.Attachment == AttachmentState.Removed)
+            else if (item.State == AttachmentState.Removed)
             {
                 if (item.RecipeId.HasValue)
                 {
@@ -200,15 +109,80 @@ public partial class AttachRecipesModalViewModel : ObservableObject
             }
         }
 
-        // detach recipes and ingredients from the main recipe
-        await _recipePartRepository.Delete(x => x.OwnerRecipeId == MainRecipe.Id && (recipesToRemove.Contains(x.RecipeId!.Value) || ingredientsToRemove.Contains(x.IngredientId!.Value)));
-        // todo  AddParts
+        return (recipesToRemove, ingredientsToRemove, recipePartsToAdd);
     }
 
     /// <summary>
     /// Reverts attachments to the initial state
     /// </summary>
-    public void ResetAssociations()
+    [RelayCommand]
+    public void ResetRelations()
     {
+        foreach (AttachedItem item in ItemsAttachments)
+        {
+            item.ResetToInitialState();
+        }
+
+        AttachedItem[] copy = new AttachedItem[ItemsAttachments.Count];
+        ItemsAttachments.CopyTo(copy, 0);
+
+        ItemsAttachments.ReplaceItems(copy);
+    }
+
+    /// <summary>
+    /// All recipes except the main one are mapped to the <see cref="AttachedItem"/> and added to the <see cref="ItemsAttachments"/>
+    /// </summary>
+    private async Task SetAttachableItems()
+    {
+        (HashSet<int> initiallyAttachedRecipes, HashSet<int> initiallyAttachedIngredients) = await GetInitiallyAttachedItems();
+
+        List<AttachedItem> initialAttachedItems = new();
+
+        // ingredients
+        List<Ingredient> allIngredients = await _ingredientRepository.GetAll();
+        allIngredients
+            .ForEach(x =>
+            {
+                AttachedItem itemAttachment = new(attachedInitially: initiallyAttachedIngredients.Contains(x.Id), title: x.Title)
+                {
+                    IngredientId = x.Id
+                };
+                initialAttachedItems.Add(itemAttachment);
+            });
+
+        // recipes
+        List<Recipe> allRecipesExceptMainOne = await _recipeRepository.GetByFilter(x => x.Id != MainRecipe.Id);
+        allRecipesExceptMainOne
+            .ForEach(x =>
+            {
+                AttachedItem itemAttachment = new(attachedInitially: initiallyAttachedRecipes.Contains(x.Id), title: x.Title)
+                {
+                    RecipeId = x.Id
+                };
+                initialAttachedItems.Add(itemAttachment);
+            });
+
+        ItemsAttachments.ReplaceItems(initialAttachedItems);
+      }
+
+    /// <summary>
+    /// Returns ids of initially attached recipes and ingredients
+    /// </summary>
+    private async Task<(HashSet<int> initiallyAttachedRecipes, HashSet<int> initiallyAttachedIngredients)> GetInitiallyAttachedItems()
+    {
+        List<RecipePart> initialyAttachedItems = await _recipePartRepository
+            .GetByFilter(x => x.OwnerRecipeId == MainRecipe.Id);
+
+        HashSet<int> initiallyAttachedRecipes = initialyAttachedItems
+            .Where(x => x.RecipeId != null)
+            .Select(x => x.RecipeId!.Value)
+            .ToHashSet();
+
+        HashSet<int> initiallyAttachedIngredients = initialyAttachedItems
+            .Where(x => x.Ingredientid != null)
+            .Select(x => x.Ingredientid!.Value)
+            .ToHashSet();
+
+        return (initiallyAttachedRecipes, initiallyAttachedIngredients);
     }
 }

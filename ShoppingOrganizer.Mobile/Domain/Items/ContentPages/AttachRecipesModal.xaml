@@ -16,31 +16,41 @@
             IsVisible="False"
             />
     </Shell.BackButtonBehavior>-->
-
     <ContentPage.Resources>
         <converters:ColorConverter x:Key="colorChangedConverter" />
     </ContentPage.Resources>
-
-    <CollectionView ItemsSource="{Binding ItemsAttachments}"
-                    SelectionMode="None">
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="{x:Type models:ItemAttachment}">
-                <Grid Padding="0,5">
-                    <Frame BackgroundColor="{Binding Attachment, Converter={StaticResource colorChangedConverter}}">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:AttachRecipesModalViewModel}}, Path=ToggleItemAttachmentCommand}"
-                                CommandParameter="{Binding .}" >
-                            </TapGestureRecognizer>
-                        </Frame.GestureRecognizers>
-                        <HorizontalStackLayout>
-                            <Label Text="{Binding Title}" 
-                               FontSize="24"/>
-                        </HorizontalStackLayout>
-                    </Frame>
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
     
+    <VerticalStackLayout>
+        <Button Text="Save"
+         VerticalOptions="Center"
+         HorizontalOptions="Center"
+         Command="{Binding SaveCommand}" />
+
+        <Button Text="Reset"
+         VerticalOptions="Center"
+         HorizontalOptions="Center"
+         Command="{Binding ResetRelationsCommand}" />
+        
+        <CollectionView ItemsSource="{Binding ItemsAttachments}"
+                    SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type models:AttachedItem}">
+                    <Grid Padding="0,5">
+                        <Frame BackgroundColor="{Binding State, Converter={StaticResource colorChangedConverter}}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:AttachRecipesModalViewModel}}, Path=ToggleAttachedItemCommand}"
+                                CommandParameter="{Binding .}" >
+                                </TapGestureRecognizer>
+                            </Frame.GestureRecognizers>
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding Title}" 
+                               FontSize="24"/>
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
 </ContentPage>
