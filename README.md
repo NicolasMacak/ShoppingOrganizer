@@ -16,7 +16,7 @@ The app will automatically calculate the quantities needed for your grocery list
 :heavy_check_mark: Design objects and their relations [Database design](https://ibb.co/jwQ3Yjt) <br>
 :heavy_check_mark: Integrate AutoMapper instead of mapping through explicit operators <br>
 :heavy_check_mark: Attaching recipes and ingredients to the main recipe <br>
-🔨 Filtering component
+🔨 Searchbar integration and filtering <br>
 :large_blue_diamond: Variants for components of an item (Backlog) <br>
 :large_blue_diamond: Linking ingredients to specific stores where they can be purchased (Backlog) <br>
 :large_blue_diamond: Generating grocery lists based on selected recipes and quantities (Backlog) <br>
